@@ -16,6 +16,8 @@ BuildRequires:	qt5-qtbase-devel = %{version}
 BuildRequires:	qt5-qtdeclarative-devel = %{version}
 BuildRequires:	qt5-qttools-devel = %{version}
 BuildRequires:	rpmbuild(macros) >= 1.654
+BuildRequires:	tar >= 1:1.22
+BuildRequires:	xz
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_noautoreqdep	libGL.so.1 libGLU.so.1
@@ -38,6 +40,9 @@ The Qt5 Connectivity - development files.
 %package doc
 Summary:	The Qt5 Connectivity - docs
 Group:		Documentation
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description doc
 The Qt5 Connectivity - documentation.
@@ -45,6 +50,9 @@ The Qt5 Connectivity - documentation.
 %package examples
 Summary:	The Qt5 Connectivity examples
 Group:		X11/Development/Libraries
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description examples
 The Qt5 Connectivity - examples.
