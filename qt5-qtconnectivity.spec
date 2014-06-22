@@ -1,5 +1,3 @@
-# TODO:
-# - cleanup
 #
 # Conditional build:
 %bcond_without	qch	# documentation in QCH format
@@ -11,17 +9,18 @@
 Summary:	The Qt5 Connectivity libraries
 Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity
 Name:		qt5-%{orgname}
-Version:	5.2.0
-Release:	0.1
+Version:	5.3.0
+Release:	1
 License:	LGPL v2.1 or GPL v3.0
 Group:		X11/Libraries
-Source0:	http://download.qt-project.org/official_releases/qt/5.2/%{version}/submodules/%{orgname}-opensource-src-%{version}.tar.xz
-# Source0-md5:	bee0760e1bf6e89d8fdceb6ea6cd50a1
+Source0:	http://download.qt-project.org/official_releases/qt/5.3/%{version}/submodules/%{orgname}-opensource-src-%{version}.tar.xz
+# Source0-md5:	46e4e8df94b4da4415aa5f5076b8bc45
 URL:		http://qt-project.org/
+BuildRequires:	Qt5Concurrent-devel >= %{qtbase_ver}
+BuildRequires:	Qt5Core-devel >= %{qtbase_ver}
+BuildRequires:	Qt5DBus-devel >= %{qtbase_ver}
+BuildRequires:	Qt5Qml-devel >= %{qtdeclarative_ver}
 BuildRequires:	bluez-libs-devel
-BuildRequires:	qt5-qtbase-devel >= %{qtbase_ver}
-BuildRequires:	qt5-qtdeclarative-devel >= %{qtdeclarative_ver}
-BuildRequires:	qt5-qttools-devel >= %{qtools_ver}
 %if %{with qch}
 BuildRequires:	qt5-assistant >= %{qttools_ver}
 %endif
@@ -30,6 +29,9 @@ BuildRequires:	qt5-qmake >= %{qtbase_ver}
 BuildRequires:	rpmbuild(macros) >= 1.654
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
+Requires:	Qt5Core >= %{qtbase_ver}
+Requires:	Qt5DBus >= %{qtbase_ver}
+Requires:	Qt5Qml>= %{qtdeclarative_ver}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		specflags	-fno-strict-aliasing
@@ -55,6 +57,9 @@ Summary:	The Qt5 Connectivity - development files
 Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity - pliki programistyczne
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	Qt5Core-devel >= %{qtbase_ver}
+Requires:	Qt5DBus-devel >= %{qtbase_ver}
+Requires:	Qt5Qml-devel >= %{qtdeclarative_ver}
 
 %description devel
 The Qt5 Connectivity - development files.
@@ -127,6 +132,32 @@ rm -rf $RPM_BUILD_ROOT
 # actually drop *.la, follow policy of not packaging them when *.pc exist
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libQt5*.la
 
+# Prepare some files list
+ifecho() {
+	r="$RPM_BUILD_ROOT$2"
+	if [ -d "$r" ]; then
+		echo "%%dir $2" >> $1.files
+	elif [ -x "$r" ] ; then
+		echo "%%attr(755,root,root) $2" >> $1.files
+	elif [ -f "$r" ]; then
+		echo "$2" >> $1.files
+	else
+		echo "Error generation $1 files list!"
+		echo "$r: no such file or directory!"
+		return 1
+	fi
+}
+ifecho_tree() {
+	ifecho $1 $2
+	for f in `find $RPM_BUILD_ROOT$2 -printf "%%P "`; do
+		ifecho $1 $2/$f
+	done
+}
+
+echo "%defattr(644,root,root,755)" > examples.files
+ifecho_tree examples %{_examplesdir}/qt5/bluetooth
+ifecho_tree examples %{_examplesdir}/qt5/nfc
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -139,7 +170,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/libQt5Bluetooth.so.5
 %attr(755,root,root) %{_libdir}/libQt5Nfc.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libQt5Nfc.so.5
-%{qt5dir}/qml/*
+%dir %{qt5dir}/qml/QtBluetooth
+%attr(755,root,root) %{qt5dir}/qml/QtBluetooth/libdeclarative_bluetooth.so
+%{qt5dir}/qml/QtBluetooth/plugins.qmltypes
+%{qt5dir}/qml/QtBluetooth/qmldir
+%dir %{qt5dir}/qml/QtNfc
+%attr(755,root,root) %{qt5dir}/qml/QtNfc/libdeclarative_nfc.so
+%{qt5dir}/qml/QtNfc/plugins.qmltypes
+%{qt5dir}/qml/QtNfc/qmldir
 
 %files devel
 %defattr(644,root,root,755)
@@ -157,4 +195,17 @@ rm -rf $RPM_BUILD_ROOT
 
 %files doc
 %defattr(644,root,root,755)
-%{_docdir}/qt5-doc/*
+%{_docdir}/qt5-doc/qtbluetooth
+%{_docdir}/qt5-doc/qtnfc
+
+%if %{with qch}
+%files doc-qch
+%defattr(644,root,root,755)
+%{_docdir}/qt5-doc/qtbluetooth.qch
+%{_docdir}/qt5-doc/qtnfc.qch
+%endif
+
+%files examples -f examples.files
+%defattr(644,root,root,755)
+# XXX: dir shared with qt5-qtbase-examples
+%dir %{_examplesdir}/qt5
