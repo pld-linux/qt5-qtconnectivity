@@ -1,8 +1,15 @@
 # TODO:
 # - cleanup
+#
+# Conditional build:
+%bcond_without	qch	# documentation in QCH format
 
 %define		orgname		qtconnectivity
-Summary:	The Qt5 Connectivity
+%define		qtbase_ver		%{version}
+%define		qtdeclarative_ver	%{version}
+%define		qttools_ver		%{version}
+Summary:	The Qt5 Connectivity libraries
+Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity
 Name:		qt5-%{orgname}
 Version:	5.2.0
 Release:	0.1
@@ -12,50 +19,92 @@ Source0:	http://download.qt-project.org/official_releases/qt/5.2/%{version}/subm
 # Source0-md5:	bee0760e1bf6e89d8fdceb6ea6cd50a1
 URL:		http://qt-project.org/
 BuildRequires:	bluez-libs-devel
-BuildRequires:	qt5-qtbase-devel = %{version}
-BuildRequires:	qt5-qtdeclarative-devel = %{version}
-BuildRequires:	qt5-qttools-devel = %{version}
+BuildRequires:	qt5-qtbase-devel >= %{qtbase_ver}
+BuildRequires:	qt5-qtdeclarative-devel >= %{qtdeclarative_ver}
+BuildRequires:	qt5-qttools-devel >= %{qtools_ver}
+%if %{with qch}
+BuildRequires:	qt5-assistant >= %{qttools_ver}
+%endif
+BuildRequires:	qt5-build >= %{qtbase_ver}
+BuildRequires:	qt5-qmake >= %{qtbase_ver}
 BuildRequires:	rpmbuild(macros) >= 1.654
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_noautoreqdep	libGL.so.1 libGLU.so.1
-%define		_noautostrip	'.*_debug\\.so*'
-
 %define		specflags	-fno-strict-aliasing
-%define		_qtdir		%{_libdir}/qt5
+%define		qt5dir		%{_libdir}/qt5
 
 %description
-The Qt5 Connectivity libraries.
+Qt is a cross-platform application and UI framework. Using Qt, you can
+write web-enabled applications once and deploy them across desktop,
+mobile and embedded systems without rewriting the source code.
+
+This package contains Qt5 Connectivity libraries.
+
+%description -l pl.UTF-8
+Qt to wieloplatformowy szkielet aplikacji i interfejsów użytkownika.
+Przy użyciu Qt można pisać aplikacje powiązane z WWW i wdrażać je w
+systemach biurkowych, przenośnych i wbudowanych bez przepisywania kodu
+źródłowego.
+
+Ten pakiet zawiera biblioteki Qt5 Connectivity.
 
 %package devel
 Summary:	The Qt5 Connectivity - development files
+Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity - pliki programistyczne
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
 The Qt5 Connectivity - development files.
 
+%description devel -l pl.UTF-8
+Biblioteki Qt5 Connectivity - pliki programistyczne.
+
 %package doc
-Summary:	The Qt5 Connectivity - docs
+Summary:	Qt5 Connectivity documentation in HTML format
+Summary(pl.UTF-8):	Dokumentacja do bibliotek Qt5 Connectivity w formacie HTML
 Group:		Documentation
+Requires:	qt5-doc-common >= %{qtbase_ver}
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
 
 %description doc
-The Qt5 Connectivity - documentation.
+Qt5 Connectivity documentation in HTML format.
+
+%description doc -l pl.UTF-8
+Dokumentacja do bibliotek Qt5 Connectivity w formacie HTML.
+
+%package doc-qch
+Summary:	Qt5 Connectivity documentation in QCH format
+Summary(pl.UTF-8):	Dokumentacja do bibliotek Qt5 Connectivity w formacie QCH
+Group:		Documentation
+Requires:	qt5-doc-common >= %{qtbase_ver}
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description doc-qch
+Qt5 Connectivity documentation in QCH format.
+
+%description doc-qch -l pl.UTF-8
+Dokumentacja do bibliotek Qt5 Connectivity w formacie QCH.
 
 %package examples
-Summary:	The Qt5 Connectivity examples
+Summary:	Qt5 Connectivity examples
+Summary(pl.UTF-8):	Przykłady do bibliotek Qt5 Connectivity
 Group:		X11/Development/Libraries
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
 
 %description examples
-The Qt5 Connectivity - examples.
+Qt5 Connectivity examples.
+
+%description examples -l pl.UTF-8
+Przykłady do bibliotek Qt5 Connectivity.
 
 %prep
 %setup -q -n %{orgname}-opensource-src-%{version}
@@ -63,45 +112,49 @@ The Qt5 Connectivity - examples.
 %build
 qmake-qt5
 %{__make}
-%{__make} docs
+%{__make} %{!?with_qch:html_}docs
 
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	INSTALL_ROOT=$RPM_BUILD_ROOT
 
-%{__make} install_docs \
+%{__make} install_%{!?with_qch:html_}docs \
 	INSTALL_ROOT=$RPM_BUILD_ROOT
+
+# useless symlinks
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libQt5*.so.5.?
+# actually drop *.la, follow policy of not packaging them when *.pc exist
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libQt5*.la
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post		-p /sbin/ldconfig
-%postun		-p /sbin/ldconfig
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %ghost %{_libdir}/libQt5Bluetooth.so.?
-%attr(755,root,root) %{_libdir}/libQt5Bluetooth.so.*.*
-%attr(755,root,root) %ghost %{_libdir}/libQt5Nfc.so.?
-%attr(755,root,root) %{_libdir}/libQt5Nfc.so.*.*
-%{_qtdir}/qml
+%attr(755,root,root) %{_libdir}/libQt5Bluetooth.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libQt5Bluetooth.so.5
+%attr(755,root,root) %{_libdir}/libQt5Nfc.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libQt5Nfc.so.5
+%{qt5dir}/qml/*
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libQt5Bluetooth.so
 %attr(755,root,root) %{_libdir}/libQt5Nfc.so
-%{_libdir}/libQt5Bluetooth.la
-%{_libdir}/libQt5Nfc.la
 %{_libdir}/libQt5Bluetooth.prl
 %{_libdir}/libQt5Nfc.prl
-%{_libdir}/cmake/Qt5Bluetooth
-%{_libdir}/cmake/Qt5Nfc
 %{_includedir}/qt5/QtBluetooth
 %{_includedir}/qt5/QtNfc
-%{_pkgconfigdir}/*.pc
-%{_qtdir}/mkspecs
+%{_pkgconfigdir}/Qt5Bluetooth.pc
+%{_pkgconfigdir}/Qt5Nfc.pc
+%{_libdir}/cmake/Qt5Bluetooth
+%{_libdir}/cmake/Qt5Nfc
+%{qt5dir}/mkspecs/modules/*.pri
 
 %files doc
 %defattr(644,root,root,755)
-%{_docdir}/qt5-doc
+%{_docdir}/qt5-doc/*
