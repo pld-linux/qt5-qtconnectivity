@@ -11,8 +11,8 @@ Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity
 Name:		qt5-%{orgname}
 Version:	5.3.0
 Release:	1
-License:	LGPL v2.1 or GPL v3.0
-Group:		X11/Libraries
+License:	LGPL v2.1 with Digia Qt LGPL Exception v1.1 or GPL v3.0
+Group:		Libraries
 Source0:	http://download.qt-project.org/official_releases/qt/5.3/%{version}/submodules/%{orgname}-opensource-src-%{version}.tar.xz
 # Source0-md5:	46e4e8df94b4da4415aa5f5076b8bc45
 URL:		http://qt-project.org/
@@ -29,9 +29,6 @@ BuildRequires:	qt5-qmake >= %{qtbase_ver}
 BuildRequires:	rpmbuild(macros) >= 1.654
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
-Requires:	Qt5Core >= %{qtbase_ver}
-Requires:	Qt5DBus >= %{qtbase_ver}
-Requires:	Qt5Qml>= %{qtdeclarative_ver}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		specflags	-fno-strict-aliasing
@@ -42,7 +39,8 @@ Qt is a cross-platform application and UI framework. Using Qt, you can
 write web-enabled applications once and deploy them across desktop,
 mobile and embedded systems without rewriting the source code.
 
-This package contains Qt5 Connectivity libraries.
+This package contains Qt5 Connectivity libraries: Qt5Bluetooth and
+QtNfc.
 
 %description -l pl.UTF-8
 Qt to wieloplatformowy szkielet aplikacji i interfejsów użytkownika.
@@ -50,22 +48,72 @@ Przy użyciu Qt można pisać aplikacje powiązane z WWW i wdrażać je w
 systemach biurkowych, przenośnych i wbudowanych bez przepisywania kodu
 źródłowego.
 
-Ten pakiet zawiera biblioteki Qt5 Connectivity.
+Ten pakiet zawiera biblioteki Qt5 Connectivity: Qt5Bluetooth i Qt5Nfc.
 
-%package devel
-Summary:	The Qt5 Connectivity - development files
-Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity - pliki programistyczne
-Group:		X11/Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+%package -n Qt5Bluetooth
+Summary:	Qt5 Bluetooth library
+Summary(pl.UTF-8):	Biblioteka Qt5 Bluetooth
+Group:		Libraries
+Requires:	Qt5Core >= %{qtbase_ver}
+Requires:	Qt5DBus >= %{qtbase_ver}
+Requires:	Qt5Qml >= %{qtdeclarative_ver}
+Obsoletes:	qt5-qtconnectivity
+
+%description -n Qt5Bluetooth
+Qt5 Bluetooth library provides classes that enable basic Bluetooth
+operations like scanning for devices and connecting them.
+
+%description -n Qt5Bluetooth -l pl.UTF-8
+Biblioteka Qt5 Bluetooth dostarcza klasy umożliwiające podstawowe
+operacje Bluetooth, takie jak wyszukiwanie urządzeń i łączenie z nimi.
+
+%package -n Qt5Bluetooth-devel
+Summary:	The Qt5 Bluetooth - development files
+Summary(pl.UTF-8):	Biblioteka Qt5 Bluetooth - pliki programistyczne
+Group:		Development/Libraries
+Requires:	Qt5Bluetooth = %{version}-%{release}
 Requires:	Qt5Core-devel >= %{qtbase_ver}
 Requires:	Qt5DBus-devel >= %{qtbase_ver}
 Requires:	Qt5Qml-devel >= %{qtdeclarative_ver}
+Obsoletes:	qt5-qtconnectivity-devel
 
-%description devel
-The Qt5 Connectivity - development files.
+%description -n Qt5Bluetooth-devel
+The Qt5 Bluetooth - development files.
 
-%description devel -l pl.UTF-8
-Biblioteki Qt5 Connectivity - pliki programistyczne.
+%description -n Qt5Bluetooth-devel -l pl.UTF-8
+Biblioteka Qt5 Bluetooth - pliki programistyczne.
+
+%package -n Qt5Nfc
+Summary:	Qt5 Nfc library
+Summary(pl.UTF-8):	Biblioteka Qt5 Nfc
+Group:		Libraries
+Requires:	Qt5Core >= %{qtbase_ver}
+Requires:	Qt5DBus >= %{qtbase_ver}
+Requires:	Qt5Qml >= %{qtdeclarative_ver}
+Obsoletes:	qt5-qtconnectivity
+
+%description -n Qt5Nfc
+Qt5 Nfc library provides classes to access NFC Forum Tags.
+
+%description -n Qt5Nfc -l pl.UTF-8
+Biblioteka Qt5 Nfc dostarcza klasy służace do dostępu do urządzeń NFC
+Forum.
+
+%package -n Qt5Nfc-devel
+Summary:	The Qt5 Nfc - development files
+Summary(pl.UTF-8):	Biblioteka Qt5 Nfc - pliki programistyczne
+Group:		Development/Libraries
+Requires:	Qt5Nfc = %{version}-%{release}
+Requires:	Qt5Core-devel >= %{qtbase_ver}
+Requires:	Qt5DBus-devel >= %{qtbase_ver}
+Requires:	Qt5Qml-devel >= %{qtdeclarative_ver}
+Obsoletes:	qt5-qtconnectivity-devel
+
+%description -n Qt5Nfc-devel
+The Qt5 Nfc - development files.
+
+%description -n Qt5Nfc-devel -l pl.UTF-8
+Biblioteka Qt5 Nfc - pliki programistyczne.
 
 %package doc
 Summary:	Qt5 Connectivity documentation in HTML format
@@ -161,37 +209,51 @@ ifecho_tree examples %{_examplesdir}/qt5/nfc
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	-p /sbin/ldconfig
-%postun	-p /sbin/ldconfig
+%post	-n Qt5Bluetooth -p /sbin/ldconfig
+%postun	-n Qt5Bluetooth -p /sbin/ldconfig
 
-%files
+%post	-n Qt5Nfc -p /sbin/ldconfig
+%postun	-n Qt5Nfc -p /sbin/ldconfig
+
+%files -n Qt5Bluetooth
 %defattr(644,root,root,755)
+%doc LGPL_EXCEPTION.txt dist/changes-*
 %attr(755,root,root) %{_libdir}/libQt5Bluetooth.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libQt5Bluetooth.so.5
-%attr(755,root,root) %{_libdir}/libQt5Nfc.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libQt5Nfc.so.5
 %dir %{qt5dir}/qml/QtBluetooth
 %attr(755,root,root) %{qt5dir}/qml/QtBluetooth/libdeclarative_bluetooth.so
 %{qt5dir}/qml/QtBluetooth/plugins.qmltypes
 %{qt5dir}/qml/QtBluetooth/qmldir
+
+%files -n Qt5Bluetooth-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libQt5Bluetooth.so
+%{_libdir}/libQt5Bluetooth.prl
+%{_includedir}/qt5/QtBluetooth
+%{_pkgconfigdir}/Qt5Bluetooth.pc
+%{_libdir}/cmake/Qt5Bluetooth
+%{qt5dir}/mkspecs/modules/qt_lib_bluetooth.pri
+%{qt5dir}/mkspecs/modules/qt_lib_bluetooth_private.pri
+
+%files -n Qt5Nfc
+%defattr(644,root,root,755)
+%doc LGPL_EXCEPTION.txt dist/changes-*
+%attr(755,root,root) %{_libdir}/libQt5Nfc.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libQt5Nfc.so.5
 %dir %{qt5dir}/qml/QtNfc
 %attr(755,root,root) %{qt5dir}/qml/QtNfc/libdeclarative_nfc.so
 %{qt5dir}/qml/QtNfc/plugins.qmltypes
 %{qt5dir}/qml/QtNfc/qmldir
 
-%files devel
+%files -n Qt5Nfc-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libQt5Bluetooth.so
 %attr(755,root,root) %{_libdir}/libQt5Nfc.so
-%{_libdir}/libQt5Bluetooth.prl
 %{_libdir}/libQt5Nfc.prl
-%{_includedir}/qt5/QtBluetooth
 %{_includedir}/qt5/QtNfc
-%{_pkgconfigdir}/Qt5Bluetooth.pc
 %{_pkgconfigdir}/Qt5Nfc.pc
-%{_libdir}/cmake/Qt5Bluetooth
 %{_libdir}/cmake/Qt5Nfc
-%{qt5dir}/mkspecs/modules/*.pri
+%{qt5dir}/mkspecs/modules/qt_lib_nfc.pri
+%{qt5dir}/mkspecs/modules/qt_lib_nfc_private.pri
 
 %files doc
 %defattr(644,root,root,755)
