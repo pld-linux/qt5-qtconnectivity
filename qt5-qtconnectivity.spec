@@ -204,7 +204,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} -C qttranslations-opensource-src-%{version} install \
 	INSTALL_ROOT=$RPM_BUILD_ROOT
 # keep only qtconnectivity
-%{__rm} $RPM_BUILD_ROOT%{_datadir}/qt5/translations/{assistant,designer,linguist,qmlviewer,qt,qtbase,qtconfig,qtdeclarative,qtlocation,qtmultimedia,qtquick1,qtscript,qtxmlpatterns}_*.qm
+%{__rm} $RPM_BUILD_ROOT%{_datadir}/qt5/translations/{assistant,designer,linguist,qmlviewer,qt,qtbase,qtconfig,qtdeclarative,qtlocation,qtmultimedia,qtquick1,qtquickcontrols,qtscript,qtxmlpatterns}_*.qm
 %endif
 
 # useless symlinks
@@ -269,6 +269,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libQt5Bluetooth.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libQt5Bluetooth.so.5
+%attr(755,root,root) %{qt5dir}/bin/sdpscanner
 %dir %{qt5dir}/qml/QtBluetooth
 %attr(755,root,root) %{qt5dir}/qml/QtBluetooth/libdeclarative_bluetooth.so
 %{qt5dir}/qml/QtBluetooth/plugins.qmltypes
