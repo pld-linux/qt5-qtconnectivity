@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_without	qch	# documentation in QCH format
+%bcond_without	doc	# Documentation
 %bcond_without	qm	# QM translations
 
 %define		orgname		qtconnectivity
@@ -24,7 +24,7 @@ BuildRequires:	Qt5Core-devel >= %{qtbase_ver}
 BuildRequires:	Qt5DBus-devel >= %{qtbase_ver}
 BuildRequires:	Qt5Qml-devel >= %{qtdeclarative_ver}
 BuildRequires:	bluez-libs-devel
-%if %{with qch}
+%if %{with doc}
 BuildRequires:	qt5-assistant >= %{qttools_ver}
 %endif
 BuildRequires:	qt5-build >= %{qtbase_ver}
@@ -183,7 +183,7 @@ Przykłady do bibliotek Qt5 Connectivity.
 %build
 qmake-qt5
 %{__make}
-%{__make} %{!?with_qch:html_}docs
+%{?with_doc:%{__make} docs}
 
 %if %{with qm}
 cd qttranslations-opensource-src-%{version}
@@ -197,8 +197,10 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	INSTALL_ROOT=$RPM_BUILD_ROOT
 
-%{__make} install_%{!?with_qch:html_}docs \
+%if %{with doc}
+%{__make} install_docs \
 	INSTALL_ROOT=$RPM_BUILD_ROOT
+%endif
 
 %if %{with qm}
 %{__make} -C qttranslations-opensource-src-%{version} install \
@@ -304,12 +306,12 @@ rm -rf $RPM_BUILD_ROOT
 %{qt5dir}/mkspecs/modules/qt_lib_nfc.pri
 %{qt5dir}/mkspecs/modules/qt_lib_nfc_private.pri
 
+%if %{with doc}
 %files doc
 %defattr(644,root,root,755)
 %{_docdir}/qt5-doc/qtbluetooth
 %{_docdir}/qt5-doc/qtnfc
 
-%if %{with qch}
 %files doc-qch
 %defattr(644,root,root,755)
 %{_docdir}/qt5-doc/qtbluetooth.qch
