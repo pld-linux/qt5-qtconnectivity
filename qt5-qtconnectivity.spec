@@ -10,14 +10,14 @@
 Summary:	The Qt5 Connectivity libraries
 Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity
 Name:		qt5-%{orgname}
-Version:	5.8.0
+Version:	5.11.1
 Release:	1
 License:	LGPL v2.1 with Digia Qt LGPL Exception v1.1 or GPL v3.0
 Group:		Libraries
-Source0:	http://download.qt.io/official_releases/qt/5.8/%{version}/submodules/%{orgname}-opensource-src-%{version}.tar.xz
-# Source0-md5:	aabc57b30ab4d888b390f12f2bee637a
-Source1:	http://download.qt.io/official_releases/qt/5.8/%{version}/submodules/qttranslations-opensource-src-%{version}.tar.xz
-# Source1-md5:	b6c6748a923b9639c7d018cfdb04caf4
+Source0:	http://download.qt.io/official_releases/qt/5.11/%{version}/submodules/%{orgname}-everywhere-src-%{version}.tar.xz
+# Source0-md5:	65ff5d921a30f7fccf0223af23011aa6
+Source1:	http://download.qt.io/official_releases/qt/5.11/%{version}/submodules/qttranslations-everywhere-src-%{version}.tar.xz
+# Source1-md5:	67c0dbd61c2b92552b5339d82a94b1a8
 URL:		http://www.qt.io/
 BuildRequires:	Qt5Concurrent-devel >= %{qtbase_ver}
 BuildRequires:	Qt5Core-devel >= %{qtbase_ver}
@@ -178,7 +178,7 @@ Qt5 Connectivity examples.
 Przykłady do bibliotek Qt5 Connectivity.
 
 %prep
-%setup -q -n %{orgname}-opensource-src-%{version} %{?with_qm:-a1}
+%setup -q -n %{orgname}-everywhere-src-%{version} %{?with_qm:-a1}
 
 %build
 qmake-qt5
@@ -186,7 +186,7 @@ qmake-qt5
 %{?with_doc:%{__make} docs}
 
 %if %{with qm}
-cd qttranslations-opensource-src-%{version}
+cd qttranslations-everywhere-src-%{version}
 qmake-qt5
 %{__make}
 cd ..
@@ -203,14 +203,14 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with qm}
-%{__make} -C qttranslations-opensource-src-%{version} install \
+%{__make} -C qttranslations-everywhere-src-%{version} install \
 	INSTALL_ROOT=$RPM_BUILD_ROOT
 # keep only qtconnectivity
-%{__rm} $RPM_BUILD_ROOT%{_datadir}/qt5/translations/{assistant,designer,linguist,qmlviewer,qt,qtbase,qtconfig,qtdeclarative,qtlocation,qtmultimedia,qtquick1,qtquickcontrols,qtscript,qtwebsockets,qtxmlpatterns}_*.qm
+%{__rm} $RPM_BUILD_ROOT%{_datadir}/qt5/translations/{assistant,designer,linguist,qmlviewer,qt,qtbase,qtdeclarative,qtlocation,qtmultimedia,qtquick1,qtquickcontrols,qtquickcontrols2,qtserialport,qtscript,qtwebengine,qtwebsockets,qtxmlpatterns}_*.qm
 %endif
 
 # useless symlinks
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libQt5*.so.5.?
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libQt5*.so.5.??
 # actually drop *.la, follow policy of not packaging them when *.pc exist
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libQt5*.la
 
@@ -265,7 +265,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files common -f qtconnectivity.lang
 %defattr(644,root,root,755)
-%doc LGPL_EXCEPTION.txt dist/changes-*
+%doc LICENSE.GPL3-EXCEPT dist/changes-*
 
 %files -n Qt5Bluetooth
 %defattr(644,root,root,755)
