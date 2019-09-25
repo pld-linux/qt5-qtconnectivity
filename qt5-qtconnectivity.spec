@@ -10,14 +10,14 @@
 Summary:	The Qt5 Connectivity libraries
 Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity
 Name:		qt5-%{orgname}
-Version:	5.13.0
+Version:	5.13.1
 Release:	1
 License:	LGPL v2.1 with Digia Qt LGPL Exception v1.1 or GPL v3.0
 Group:		Libraries
 Source0:	http://download.qt.io/official_releases/qt/5.13/%{version}/submodules/%{orgname}-everywhere-src-%{version}.tar.xz
-# Source0-md5:	56bc45931106698d21978c29556bbd91
+# Source0-md5:	b45fc7c688d6357f9c2f165001d64766
 Source1:	http://download.qt.io/official_releases/qt/5.13/%{version}/submodules/qttranslations-everywhere-src-%{version}.tar.xz
-# Source1-md5:	071888e332858a1dfd733e2d264cb284
+# Source1-md5:	8f2e2ce52c296a1bfd814610770663ae
 URL:		http://www.qt.io/
 BuildRequires:	Qt5Concurrent-devel >= %{qtbase_ver}
 BuildRequires:	Qt5Core-devel >= %{qtbase_ver}
