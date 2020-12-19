@@ -76,7 +76,7 @@ Requires:	Qt5Core >= %{qtbase_ver}
 Requires:	Qt5DBus >= %{qtbase_ver}
 Requires:	Qt5Network >= %{qtbase_ver}
 Requires:	Qt5Qml >= %{qtdeclarative_ver}
-Obsoletes:	qt5-qtconnectivity
+Obsoletes:	qt5-qtconnectivity < 5.3.1
 
 %description -n Qt5Bluetooth
 Qt5 Bluetooth library provides classes that enable basic Bluetooth
@@ -94,7 +94,7 @@ Requires:	Qt5Bluetooth = %{version}-%{release}
 Requires:	Qt5Core-devel >= %{qtbase_ver}
 Requires:	Qt5DBus-devel >= %{qtbase_ver}
 Requires:	Qt5Qml-devel >= %{qtdeclarative_ver}
-Obsoletes:	qt5-qtconnectivity-devel
+Obsoletes:	qt5-qtconnectivity-devel < 5.3.1
 
 %description -n Qt5Bluetooth-devel
 The Qt5 Bluetooth - development files.
