@@ -10,14 +10,14 @@
 Summary:	The Qt5 Connectivity libraries
 Summary(pl.UTF-8):	Biblioteki Qt5 Connectivity
 Name:		qt5-%{orgname}
-Version:	5.15.4
+Version:	5.15.5
 Release:	1
 License:	LGPL v3 or GPL v2 or GPL v3 or commercial
 Group:		Libraries
 Source0:	https://download.qt.io/official_releases/qt/5.15/%{version}/submodules/%{orgname}-everywhere-opensource-src-%{version}.tar.xz
-# Source0-md5:	d79c1bc630b57c90618224a2157e0eb3
+# Source0-md5:	bb22f38d2bde6361a7ea49e4e57e7efb
 Source1:	https://download.qt.io/official_releases/qt/5.15/%{version}/submodules/qttranslations-everywhere-opensource-src-%{version}.tar.xz
-# Source1-md5:	6ba46a712a698118f396f78a785f6774
+# Source1-md5:	fa34c5c6f4facdfa18055c15532dd138
 URL:		https://www.qt.io/
 BuildRequires:	Qt5Concurrent-devel >= %{qtbase_ver}
 BuildRequires:	Qt5Core-devel >= %{qtbase_ver}
@@ -111,7 +111,7 @@ Requires:	%{name}-common = %{version}-%{release}
 Requires:	Qt5Core >= %{qtbase_ver}
 Requires:	Qt5DBus >= %{qtbase_ver}
 Requires:	Qt5Qml >= %{qtdeclarative_ver}
-Obsoletes:	qt5-qtconnectivity
+Obsoletes:	qt5-qtconnectivity < 5.3.1
 
 %description -n Qt5Nfc
 Qt5 Nfc library provides classes to access NFC Forum Tags.
@@ -128,7 +128,7 @@ Requires:	Qt5Nfc = %{version}-%{release}
 Requires:	Qt5Core-devel >= %{qtbase_ver}
 Requires:	Qt5DBus-devel >= %{qtbase_ver}
 Requires:	Qt5Qml-devel >= %{qtdeclarative_ver}
-Obsoletes:	qt5-qtconnectivity-devel
+Obsoletes:	qt5-qtconnectivity-devel < 5.3.1
 
 %description -n Qt5Nfc-devel
 The Qt5 Nfc - development files.
