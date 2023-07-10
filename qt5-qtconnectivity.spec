@@ -73,7 +73,7 @@ Summary:	Qt5 Bluetooth library
 Summary(pl.UTF-8):	Biblioteka Qt5 Bluetooth
 Group:		Libraries
 Requires:	%{name}-common = %{version}-%{release}
-Requires:	Qt5Core >= %{qtbase_ver}
+%requires_eq_to	Qt5Core Qt5Core-devel
 Requires:	Qt5DBus >= %{qtbase_ver}
 Requires:	Qt5Network >= %{qtbase_ver}
 Requires:	Qt5Qml >= %{qtdeclarative_ver}
@@ -108,7 +108,7 @@ Summary:	Qt5 Nfc library
 Summary(pl.UTF-8):	Biblioteka Qt5 Nfc
 Group:		Libraries
 Requires:	%{name}-common = %{version}-%{release}
-Requires:	Qt5Core >= %{qtbase_ver}
+%requires_eq_to	Qt5Core Qt5Core-devel
 Requires:	Qt5DBus >= %{qtbase_ver}
 Requires:	Qt5Qml >= %{qtdeclarative_ver}
 Obsoletes:	qt5-qtconnectivity < 5.3.1
